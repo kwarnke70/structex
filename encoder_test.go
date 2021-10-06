@@ -155,6 +155,56 @@ func TestEndianEncoder(t *testing.T) {
 	})
 }
 
+func TestLittleEndian24BitfieldEncoder(t *testing.T) {
+
+	s := struct {
+		A int `bitfield:"24" little:""`
+		B int `bitfield:"8"`
+	}{
+		0x123456, 0x78,
+	}
+
+	packAndTest(t, s, func(t *testing.T, tw *testWriter) {
+		if tw.getByte(0) != 0x56 {
+			t.Errorf("Invalid bitfield: Expected: %#02x Actual: %#02x", 0x56, tw.getByte(0))
+		}
+		if tw.getByte(1) != 0x34 {
+			t.Errorf("Invalid bitfield: Expected: %#02x Actual: %#02x", 0x34, tw.getByte(1))
+		}
+		if tw.getByte(2) != 0x12 {
+			t.Errorf("Invalid bitfield: Expected: %#02x Actual: %#02x", 0x12, tw.getByte(2))
+		}
+		if tw.getByte(3) != 0x78 {
+			t.Errorf("Invalid bitfield: Expected: %#02x Actual: %#02x", 0x78, tw.getByte(3))
+		}
+	})
+}
+
+func TestBigEndian24BitfieldEncoder(t *testing.T) {
+
+	s := struct {
+		A uint32 `bitfield:"24" big:""`
+		B uint32 `bitfield:"8"`
+	}{
+		0x123456, 0x78,
+	}
+
+	packAndTest(t, s, func(t *testing.T, tw *testWriter) {
+		if tw.getByte(0) != 0x12 {
+			t.Errorf("Invalid bitfield: Expected: %#02x Actual: %#02x", 0x12, tw.getByte(0))
+		}
+		if tw.getByte(1) != 0x34 {
+			t.Errorf("Invalid bitfield: Expected: %#02x Actual: %#02x", 0x34, tw.getByte(1))
+		}
+		if tw.getByte(2) != 0x56 {
+			t.Errorf("Invalid bitfield: Expected: %#02x Actual: %#02x", 0x56, tw.getByte(2))
+		}
+		if tw.getByte(3) != 0x78 {
+			t.Errorf("Invalid bitfield: Expected: %#02x Actual: %#02x", 0x78, tw.getByte(3))
+		}
+	})
+}
+
 func TestBitfieldEncoder(t *testing.T) {
 
 	s := struct {

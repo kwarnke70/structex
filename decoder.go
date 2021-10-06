@@ -131,6 +131,9 @@ func (d *decoder) readValue(value reflect.Value, tags *tags) (uint64, error) {
 		case reflect.Uint64, reflect.Int64:
 			v = bits.ReverseBytes64(v)
 		}
+		if nbits == 24 {
+			v >>= uint64(value.Type().Bits()) - nbits
+		}
 	}
 
 	switch value.Kind() {

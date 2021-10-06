@@ -111,6 +111,11 @@ func (e *encoder) field(val reflect.Value, tags *tags) error {
 	}
 
 	if tags.endian == big {
+		// not all bits used?
+		if nbits == 24 {
+			// shift to msb so reverse works correct
+			v <<= uint64(val.Type().Bits()) - nbits
+		}
 		switch val.Kind() {
 		case reflect.Uint16, reflect.Int16:
 			v = uint64(bits.ReverseBytes16(uint16(v)))

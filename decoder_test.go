@@ -135,6 +135,51 @@ func TestEndianDecoder(t *testing.T) {
 	})
 
 }
+
+func TestLittleEndian24BitfieldDecoder(t *testing.T) {
+	type ts struct {
+		A uint32 `bitfield:"24" Little:""`
+		B uint32 `bitfield:"8"`
+	}
+
+	var s = new(ts)
+
+	var tr = newReader([]byte{0x56, 0x34, 0x12, 0x78})
+
+	unpackAndTest(t, s, tr, func(t *testing.T, i interface{}) {
+		var s = i.(*ts)
+
+		if s.A != 0x123456 {
+			t.Errorf("Test Value Incorrect: Expected: %#02x Actual: %#02x", 0x123456, s.A)
+		}
+		if s.B != 0x78 {
+			t.Errorf("Test Value Incorrect: Expected: %#02x Actual: %#02x", 0x78, s.B)
+		}
+	})
+}
+
+func TestBigEndian24BitfieldDecoder(t *testing.T) {
+	type ts struct {
+		A uint32 `bitfield:"24" Big:""`
+		B uint32 `bitfield:"8"`
+	}
+
+	var s = new(ts)
+
+	var tr = newReader([]byte{0x12, 0x34, 0x56, 0x78})
+
+	unpackAndTest(t, s, tr, func(t *testing.T, i interface{}) {
+		var s = i.(*ts)
+
+		if s.A != 0x123456 {
+			t.Errorf("Test Value Incorrect: Expected: %#02x Actual: %#02x", 0x123456, s.A)
+		}
+		if s.B != 0x78 {
+			t.Errorf("Test Value Incorrect: Expected: %#02x Actual: %#02x", 0x78, s.B)
+		}
+	})
+}
+
 func TestBitfieldDecoder(t *testing.T) {
 
 	type ts struct {
